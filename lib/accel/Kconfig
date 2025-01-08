@@ -1,0 +1,6 @@
+# Custom lib Kconfig
+
+config ACCELLIB
+	bool "Support for custom accelerometer library"
+	help
+	  This option enables the custom accelerometer library.
