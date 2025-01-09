@@ -13,17 +13,16 @@ int main(void)
     int rc;
 	const struct device * accel;
     struct accel_values accel_xyz;
-    get_accel_values_(const struct device *accel, struct accel_values *values)
 
 	printk("Zephyr Example Application %s\n", APP_VERSION_STRING);
 
-    accel = get_accel_device(accel);
+    accel = get_accel_device();
     if (accel == NULL) {
         return -1;
     }
 
 	while (1) {
-        rc = get_accel_values(accel, accel_xyz);
+        rc = get_accel_values(accel, &accel_xyz);
 		k_sleep(K_MSEC(500));
 	}
 

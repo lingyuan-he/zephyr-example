@@ -1,8 +1,9 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/sys/errno.h>
 
 #include <app/lib/accel.h>
+
+LOG_MODULE_REGISTER(accel, CONFIG_APP_LOG_LEVEL);
 
 /**
  * @brief Return a pointer to the accelerometer device.
@@ -23,6 +24,8 @@ const struct device * get_accel_device(void)
 		LOG_ERR("Device %s is not ready", sensor->name);
 		return NULL;
 	}
+
+    return sensor;
 }
 
 /**
@@ -31,7 +34,7 @@ const struct device * get_accel_device(void)
  * @param values Pointer to an accel_values struct.
  * @retval 0 if successful, -errno otherwise.
  */
-int get_accel_values(const struct device *accel, struct accel_values *values)
+int get_accel_values(const struct device *sensor, struct accel_values *values)
 {
     int rc;
     struct sensor_value s_values[3];
