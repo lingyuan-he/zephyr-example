@@ -13,7 +13,7 @@ LOG_MODULE_REGISTER(accel, CONFIG_APP_LOG_LEVEL);
  */
 const struct device * get_accel_device(void)
 {
-    const struct device * sensor = DEVICE_DT_GET_ANY(accel);
+    const struct device * sensor = DEVICE_DT_GET_OR_NULL(DT_ALIAS(accel));
 
 	if (sensor == NULL) {
 		LOG_ERR("No accelerometer device found in the device tree");
