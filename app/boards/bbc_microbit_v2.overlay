@@ -4,34 +4,35 @@
 
 / {
     /*
-     * Give an alias to the accelerometer.
+     * Give an alias to the accelerometer to be used in the "accel" lib.
      */
     aliases {
         accel = &lsm303agr_accel;
     };
 
     /*
-     * Define a "leds" node mapping to the LED matrix, give the ports aliases.
+     * Define a node of the custom "ledmatrix" binding that maps to the 5x5 LED
+     * matrix. Provide the same GPIO pins like the "led_matrix" node in the
+     * bbc_microbit_v2 Devicetree definition file.
      */
-    /*leds : leds {
-        compaible: "nordic,nrf-led-matrix";
-        srcrow1 = <&gpio0 21 GPIO_ACTIVE_HIGH>;
-	    srcrow2 = <&gpio0 22 GPIO_ACTIVE_HIGH>;
-		srcrow3 = <&gpio0 15 GPIO_ACTIVE_HIGH>;
-	    srcrow4 = <&gpio0 24 GPIO_ACTIVE_HIGH>;
-		srcrow5 = <&gpio0 19 GPIO_ACTIVE_HIGH>;
-        sinkcol1 = <&gpio0 28 GPIO_ACTIVE_LOW>;
-		sinkcol2 = <&gpio0 11 GPIO_ACTIVE_LOW>;
-		sinkcol3 = <&gpio0 31 GPIO_ACTIVE_LOW>;
-		sinkcol4 = <&gpio1  5 GPIO_ACTIVE_LOW>;
-		sinkcol5 = <&gpio0 30 GPIO_ACTIVE_LOW>;
-
-    };*/
+    ledmatrix-device {
+        compaible = "ledmatrix";
+        row-gpio-pins = <&gpio0 21 GPIO_ACTIVE_HIGH>,
+                        <&gpio0 22 GPIO_ACTIVE_HIGH>,
+                        <&gpio0 15 GPIO_ACTIVE_HIGH>,
+                        <&gpio0 24 GPIO_ACTIVE_HIGH>,
+                        <&gpio0 19 GPIO_ACTIVE_HIGH>;
+        col-gpio-pins = <&gpio0 28 GPIO_ACTIVE_LOW>,
+                        <&gpio0 11 GPIO_ACTIVE_LOW>,
+                        <&gpio0 31 GPIO_ACTIVE_LOW>,
+                        <&gpio1  5 GPIO_ACTIVE_LOW>,
+                        <&gpio0 30 GPIO_ACTIVE_LOW>;
+    };
 };
 
 /*
- * Configure the accelerometer, here as an example, simply repeat one of
- * the default config.
+ * Configure the accelerometer via the lis2dh (i2c) binding. Here as an example,
+ * simply repeat one of the default config.
  */ 
 &lsm303agr_accel {
     anym-mode = <0>;

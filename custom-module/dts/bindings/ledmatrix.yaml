@@ -1,0 +1,17 @@
+description: An LED matrix that consists of row and column GPIO pins.
+
+# Device tree node will have the same "compatible" attribute.
+compatible: "ledmatrix"
+
+properties:
+  row-gpio-pins:
+    type: phandle-array
+    required: true
+    description: |
+      Array of row GPIOs pins that are part of the matrix.
+
+  col-gpio-pins:
+    type: phandle-array
+    required: true
+    description: |
+      Array of column GPIOs pins that are part of the matrix.
