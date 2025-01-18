@@ -223,7 +223,7 @@ static int ledmatrix_init(const struct device *dev)
   //                                                        led_row_gpios, 0);
 
 
-const struct gpio_dt_spec spec3 = GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(custom_led_matrix), led_row_gpios, 0);
+const struct gpio_dt_spec spec3 = GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(custom_lednode), led_row_gpios, 0);
 
 //const struct gpio_dt_spec spec4 = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELABEL(custom_led_matrix), led_row_gpios, 0);
 
