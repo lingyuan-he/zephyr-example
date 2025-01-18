@@ -3,7 +3,7 @@ description: |
 
 # Device tree node will have the same "compatible" attribute to be picked up
 # by a driver that intends to operate on the device.
-compatible: "custom-led-matrix"
+compatible: "custom-ledmatrix"
 
 include: base.yaml
 
