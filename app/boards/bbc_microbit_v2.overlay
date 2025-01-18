@@ -15,8 +15,9 @@
      * matrix. Provide the same GPIO pins like the "led_matrix" node in the
      * bbc_microbit_v2 Devicetree definition file.
      */
-    ledmatrix-device {
+    ledmatrix_device: ledmatrix-device {
         compaible = "ledmatrix";
+        status = "okay";
         row-gpio-pins = <&gpio0 21 GPIO_ACTIVE_HIGH>,
                         <&gpio0 22 GPIO_ACTIVE_HIGH>,
                         <&gpio0 15 GPIO_ACTIVE_HIGH>,

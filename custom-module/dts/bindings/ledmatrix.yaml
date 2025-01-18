@@ -1,7 +1,10 @@
-description: An LED matrix that consists of row and column GPIO pins.
+description: |
+  An LED matrix that consists of row and column GPIO pins.
 
 # Device tree node will have the same "compatible" attribute.
 compatible: "ledmatrix"
+
+include: base.yaml
 
 properties:
   row-gpio-pins:

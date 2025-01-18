@@ -1,0 +1,21 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig LEDMATRIX
+	bool "LED matrix device driver"
+	help
+	  This option enables the custom LED matrix driver.
+
+if LEDMATRIX
+
+config LEDMATRIX_INIT_PRIORITY
+	int "LED matrix device driver init priority"
+	default KERNEL_INIT_PRIORITY_DEVICE
+	help
+	  LED matrix device driver init priority.
+
+module = LEDMATRIX
+module-str = ledmatrix
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # LEDMATRIX
