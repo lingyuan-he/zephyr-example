@@ -1,19 +1,20 @@
 description: |
   An LED matrix that consists of row and column GPIO pins.
 
-# Device tree node will have the same "compatible" attribute.
-compatible: "ledmatrix"
+# Device tree node will have the same "compatible" attribute to be picked up
+# by a driver that intends to operate on the device.
+compatible: "custom-led-matrix"
 
 include: base.yaml
 
 properties:
-  row-gpio-pins:
+  led-row-gpios:
     type: phandle-array
     required: true
     description: |
       Array of row GPIOs pins that are part of the matrix.
 
-  col-gpio-pins:
+  led-col-gpios:
     type: phandle-array
     required: true
     description: |

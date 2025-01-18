@@ -1,8 +1,9 @@
 /*
  * DT_DRV_COMPAT defines what device the driver class is compatible with.
- * This matches the "compatible" attribute of the node in the device tree.
+ * This matches the "compatible" attribute of the device node in the device
+ * tree overlay.
  */
-#define DT_DRV_COMPAT ledmatrix
+#define DT_DRV_COMPAT custom_led_matrix
 
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
@@ -14,10 +15,10 @@
 
 LOG_MODULE_REGISTER(ledmatrix, CONFIG_LEDMATRIX_LOG_LEVEL);
 
-/* Uses the first ledmatrix compatible device. */
-#define LEDMATRIX_NODE DT_NODELABEL(ledmatrix_device)
-//#define LEDMATRIX_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(ledmatrix)
-/* Assumes 5x5 as code below hard-codes the number of pin values. */
+/* Uses the first custom_led_matrix compatible device. */
+//#define LEDMATRIX_NODE DT_NODELABEL(custom_led_matrix)
+
+/* Assumes 5x5 as code below hard-codes the number of pin values to set. */
 #define NUM_ROW 5 
 #define NUM_COL 5
 
@@ -215,23 +216,27 @@ static int ledmatrix_init(const struct device *dev)
 
 
 //!!
-const struct gpio_dt_spec spec = GPIO_DT_SPEC_INST_GET_BY_IDX(ledmatrix, row_gpio_pins, 0);
+//const struct gpio_dt_spec spec = GPIO_DT_SPEC_INST_GET_BY_IDX(custom_led_matrix, led_row_gpios, 0);
 
 
-const struct gpio_dt_spec spec2 = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELABEL(ledmatrix_device),
-                                                     row_gpio_pins, 0);
+//const struct gpio_dt_spec spec2 = GPIO_DT_SPEC_GET_BY_IDX(DT_INST(0, custom_led_matrix),
+  //                                                        led_row_gpios, 0);
 
+
+const struct gpio_dt_spec spec3 = GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(custom_led_matrix), led_row_gpios, 0);
+
+//const struct gpio_dt_spec spec4 = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELABEL(custom_led_matrix), led_row_gpios, 0);
 
 /*
  * @brief configuration of the LED matrix that contains the specs of the row
  * and column GPIO pins.
  */
-static const struct ledmatrix_config config = {
-	.rows = { DT_FOREACH_PROP_ELEM_SEP(DT_NODELABEL(ledmatrix_device), row_gpio_pins,
-                                       GPIO_DT_SPEC_GET_BY_IDX, (, )) },
-    .cols = { DT_FOREACH_PROP_ELEM_SEP(DT_NODELABEL(ledmatrix_device), col_gpio_pins,
-                                       GPIO_DT_SPEC_GET_BY_IDX, (, )) },
-};
+//static const struct ledmatrix_config config = {
+//	.rows = { DT_FOREACH_PROP_ELEM_SEP(LEDMATRIX_NODE, led_row_gpios,
+  //                                     GPIO_DT_SPEC_GET_BY_IDX, (, )) },
+    //.cols = { DT_FOREACH_PROP_ELEM_SEP(LEDMATRIX_NODE, led_col_gpios,
+      //                                 GPIO_DT_SPEC_GET_BY_IDX, (, )) },
+//};
 
 /*
  * @brief Device API struct of the LED matrix driver.
@@ -244,6 +249,6 @@ static DEVICE_API(ledmatrix, driver_api) = {
     .ledmatrix_off = ledmatrix_off,
 };
 
-DEVICE_DT_DEFINE(LEDMATRIX_NODE,
-                 ledmatrix_init, NULL, NULL /* No mutable data */, &config,
-		         POST_KERNEL, CONFIG_LEDMATRIX_INIT_PRIORITY, &driver_api);
+//DEVICE_DT_DEFINE(LEDMATRIX_NODE,
+  //               ledmatrix_init, NULL, NULL /* No mutable data */, &config,
+	//	         POST_KERNEL, CONFIG_LEDMATRIX_INIT_PRIORITY, &driver_api);

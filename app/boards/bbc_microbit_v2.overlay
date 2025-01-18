@@ -3,32 +3,32 @@
  */
 
 / {
-    /*
-     * Give an alias to the accelerometer to be used in the "accel" lib.
-     */
-    aliases {
-        accel = &lsm303agr_accel;
-    };
+	/*
+	 * Give an alias to the accelerometer to be used in the "accel" lib.
+	 */
+	aliases {
+		accel = &lsm303agr_accel;
+	};
 
-    /*
-     * Define a node of the custom "ledmatrix" binding that maps to the 5x5 LED
-     * matrix. Provide the same GPIO pins like the "led_matrix" node in the
-     * bbc_microbit_v2 Devicetree definition file.
-     */
-    ledmatrix_device: ledmatrix-device {
-        compaible = "ledmatrix";
-        status = "okay";
-        row-gpio-pins = <&gpio0 21 GPIO_ACTIVE_HIGH>,
-                        <&gpio0 22 GPIO_ACTIVE_HIGH>,
-                        <&gpio0 15 GPIO_ACTIVE_HIGH>,
-                        <&gpio0 24 GPIO_ACTIVE_HIGH>,
-                        <&gpio0 19 GPIO_ACTIVE_HIGH>;
-        col-gpio-pins = <&gpio0 28 GPIO_ACTIVE_LOW>,
-                        <&gpio0 11 GPIO_ACTIVE_LOW>,
-                        <&gpio0 31 GPIO_ACTIVE_LOW>,
-                        <&gpio1  5 GPIO_ACTIVE_LOW>,
-                        <&gpio0 30 GPIO_ACTIVE_LOW>;
-    };
+	/*
+	 * Define a node of the custom "custom-led-matrix" binding that maps to th
+	 * 5x5 LED matrix. Provide the same GPIO pins like the "led_matrix" node in
+	 * the bbc_microbit_v2 board Devicetree definition file.
+	 */
+	custom_led_matrix {
+		compaible = "custom-led-matrix";
+		status = "okay";
+		led-row-gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>,
+		                <&gpio0 22 GPIO_ACTIVE_HIGH>,
+		                <&gpio0 15 GPIO_ACTIVE_HIGH>,
+		                <&gpio0 24 GPIO_ACTIVE_HIGH>,
+		                <&gpio0 19 GPIO_ACTIVE_HIGH>;
+		led-col-gpios = <&gpio0 28 GPIO_ACTIVE_LOW>,
+		                <&gpio0 11 GPIO_ACTIVE_LOW>,
+		                <&gpio0 31 GPIO_ACTIVE_LOW>,
+		                <&gpio1  5 GPIO_ACTIVE_LOW>,
+		                <&gpio0 30 GPIO_ACTIVE_LOW>;
+	};
 };
 
 /*
@@ -36,5 +36,5 @@
  * simply repeat one of the default config.
  */ 
 &lsm303agr_accel {
-    anym-mode = <0>;
+	anym-mode = <0>;
 };
