@@ -18,9 +18,6 @@ LOG_MODULE_REGISTER(ledmatrix, CONFIG_LEDMATRIX_LOG_LEVEL);
 /*
  * Expect only one custom_ledmatrix compatible node in the device tree, use
  * it in init/operation.
- * Other methods of getting the node:
- * DT_PATH(custom_ledmatrix)
- * DT_NODELABEL(ledmatrix_label)
  */
 #define LEDMATRIX_NODE DT_INST(0, custom_ledmatrix)
 
@@ -90,7 +87,7 @@ static int _set_ledmatrix_rows_cols(const struct device *dev, const uint32_t *ro
  * @retval 0 if successful.
  * @retval -errno Negative errno code on failure.
  */
-int set_leftcol_led(const struct device *dev)
+static int set_left_col(const struct device *dev)
 {
     LOG_DBG("Setting the left column LED on");
 
@@ -110,7 +107,7 @@ int set_leftcol_led(const struct device *dev)
  * @retval 0 if successful.
  * @retval -errno Negative errno code on failure.
  */
-int set_rightcol_led(const struct device *dev)
+static int set_right_col(const struct device *dev)
 {
     LOG_DBG("Setting the right column LED on");
 
@@ -130,7 +127,7 @@ int set_rightcol_led(const struct device *dev)
  * @retval 0 if successful.
  * @retval -errno Negative errno code on failure.
  */
-int set_toprow_led(const struct device *dev)
+static int set_top_row(const struct device *dev)
 {
     LOG_DBG("Setting the top row LED on");
 
@@ -150,7 +147,7 @@ int set_toprow_led(const struct device *dev)
  * @retval 0 if successful.
  * @retval -errno Negative errno code on failure.
  */
-int set_bottomrow_led(const struct device *dev)
+static int set_bottom_row(const struct device *dev)
 {
     LOG_DBG("Setting the bottom row LED on");
 
@@ -170,7 +167,7 @@ int set_bottomrow_led(const struct device *dev)
  * @retval 0 if successful.
  * @retval -errno Negative errno code on failure.
  */
-int ledmatrix_off(const struct device *dev)
+static int turn_off(const struct device *dev)
 {
     LOG_DBG("Turning the LED matrix off");
 
@@ -182,6 +179,14 @@ int ledmatrix_off(const struct device *dev)
     return _set_ledmatrix_rows_cols(dev, row_values, col_values);
 }
 
+/**
+ * @brief Initialize the LED matrix.
+ *
+ * @param dev LED matrix device.
+ *
+ * @retval 0 if successful.
+ * @retval -errno Negative errno code on failure.
+ */
 static int ledmatrix_init(const struct device *dev)
 {
     int i;
@@ -233,12 +238,12 @@ static const struct ledmatrix_config config = {
 /*
  * @brief Device API struct of the LED matrix driver.
  */
-static DEVICE_API(ledmatrix, driver_api) = {
-    .set_leftcol_led = set_leftcol_led,
-    .set_rightcol_led = set_rightcol_led,
-    .set_toprow_led = set_toprow_led,
-    .set_bottomrow_led = set_rightcol_led,
-    .ledmatrix_off = ledmatrix_off,
+static struct ledmatrix_driver_api driver_api = {
+    .set_left_col = set_left_col,
+    .set_right_col = set_right_col,
+    .set_top_row = set_top_row,
+    .set_bottom_row = set_bottom_row,
+    .turn_off = turn_off,
 };
 
 DEVICE_DT_DEFINE(LEDMATRIX_NODE,

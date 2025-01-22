@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.13.1)
 
-# Define the custom module for library/Kconfig/Device tree.
+# Define the custom module for driver/library/Kconfig/Devicetree overlay.
 # Must be done before finding the Zephyr package.
 list(APPEND EXTRA_ZEPHYR_MODULES
   ${CMAKE_CURRENT_SOURCE_DIR}/../custom-module

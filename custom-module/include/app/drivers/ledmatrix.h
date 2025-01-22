@@ -34,7 +34,7 @@ __subsystem struct ledmatrix_driver_api {
 	 * @retval 0 if successful.
 	 * @retval -errno Negative errno code on failure.
 	 */
-	int (*set_leftcol_led)(const struct device *dev);
+	int (*set_left_col)(const struct device *dev);
 
     /**
      * @brief Set the right-most column of LED to illuminate.
@@ -44,7 +44,7 @@ __subsystem struct ledmatrix_driver_api {
      * @retval 0 if successful.
      * @retval -errno Negative errno code on failure.
      */
-    int (*set_rightcol_led)(const struct device *dev);
+    int (*set_right_col)(const struct device *dev);
 
     /**
      * @brief Set the top row of LED to illuminate.
@@ -54,7 +54,7 @@ __subsystem struct ledmatrix_driver_api {
      * @retval 0 if successful.
      * @retval -errno Negative errno code on failure.
      */
-    int (*set_toprow_led)(const struct device *dev);
+    int (*set_top_row)(const struct device *dev);
 
     /**
      * @brief Set the bottom row of LED to illuminate.
@@ -64,7 +64,7 @@ __subsystem struct ledmatrix_driver_api {
      * @retval 0 if successful.
      * @retval -errno Negative errno code on failure.
      */
-    int (*set_bottomrow_led)(const struct device *dev);
+    int (*set_bottom_row)(const struct device *dev);
 
     /**
      * @brief Turn the LED matrix off.
@@ -74,7 +74,7 @@ __subsystem struct ledmatrix_driver_api {
      * @retval 0 if successful.
      * @retval -errno Negative errno code on failure.
      */
-    int (*ledmatrix_off)(const struct device *dev);
+    int (*turn_off)(const struct device *dev);
 };
 
 /** @} */
