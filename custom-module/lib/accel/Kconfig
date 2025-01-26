@@ -1,6 +1,14 @@
 # Custom lib Kconfig
 
-config ACCELLIB
+menuconfig ACCELLIB
 	bool "Support for custom accelerometer library"
 	help
 	  This option enables the custom accelerometer library.
+
+if ACCELLIB
+
+module = ACCELLIB
+module-str = accellib
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ACCELLIB

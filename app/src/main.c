@@ -103,6 +103,8 @@ int main(void)
         return -1;
     }
 
+    LOG_ERR("ready %d", device_is_ready(ledmatrix));
+
 	while (1) {
         rc = get_accel_values(accel, &accel_xyz);
 

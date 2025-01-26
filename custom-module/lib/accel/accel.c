@@ -3,7 +3,7 @@
 
 #include <app/lib/accel.h>
 
-LOG_MODULE_REGISTER(accel, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(accel, CONFIG_ACCELLIB_LOG_LEVEL);
 
 /**
  * @brief Return a pointer to the accelerometer device.

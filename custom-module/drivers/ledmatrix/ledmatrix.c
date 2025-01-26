@@ -61,6 +61,7 @@ static int _set_ledmatrix_rows_cols(const struct device *dev, const uint32_t *ro
 
     for (i = 0; i < NUM_ROW; i++) {
         spec = &config->rows[i];
+        LOG_DBG("Setting row GPIO pin %d to %d", spec->pin, row_values[i]);
         retval = gpio_pin_set_dt(spec, row_values[i]);
         if (retval != 0) {
             LOG_ERR("Failed to set GPIO of row %d: %d", i, retval);
@@ -70,6 +71,7 @@ static int _set_ledmatrix_rows_cols(const struct device *dev, const uint32_t *ro
 
     for (i = 0; i < NUM_COL; i++) {
         spec = &config->cols[i];
+        LOG_DBG("Setting column GPIO pin %d to %d", spec->pin, col_values[i]);
         retval = gpio_pin_set_dt(spec, col_values[i]); 
         if (retval != 0) {
             LOG_ERR("Failed to set GPIO of column %d: %d", i, retval);
@@ -187,7 +189,7 @@ static int turn_off(const struct device *dev)
  * @retval 0 if successful.
  * @retval -errno Negative errno code on failure.
  */
-static int ledmatrix_init(const struct device *dev)
+static int init(const struct device *dev)
 {
     int i;
     int retval;
@@ -195,8 +197,11 @@ static int ledmatrix_init(const struct device *dev)
 
     const struct ledmatrix_config *config = dev->config;
 
+    printk("Initiating LED matrix");
+
     for (i = 0; i < NUM_ROW; i++) {
         spec = &config->rows[i];
+        LOG_DBG("Initiating GPIO row pin %d", spec->pin);
         if (!gpio_is_ready_dt(spec)) {
             LOG_ERR("GPIO of row %d is not ready", i);
             return -ENODEV;
@@ -210,6 +215,7 @@ static int ledmatrix_init(const struct device *dev)
 
     for (i = 0; i < NUM_COL; i++) {
         spec = &config->cols[i];
+        LOG_DBG("Initiating GPIO column pin %d", spec->pin);
         if (!gpio_is_ready_dt(spec)) {
             LOG_ERR("GPIO of column %d is not ready", i);
             return -ENODEV;
@@ -239,13 +245,13 @@ static const struct ledmatrix_config config = {
  * @brief Device API struct of the LED matrix driver.
  */
 static struct ledmatrix_driver_api driver_api = {
-    .set_left_col = set_left_col,
-    .set_right_col = set_right_col,
-    .set_top_row = set_top_row,
-    .set_bottom_row = set_bottom_row,
-    .turn_off = turn_off,
+    .set_left_col = &set_left_col,
+    .set_right_col = &set_right_col,
+    .set_top_row = &set_top_row,
+    .set_bottom_row = &set_bottom_row,
+    .turn_off = &turn_off,
 };
 
 DEVICE_DT_DEFINE(LEDMATRIX_NODE,
-                 ledmatrix_init, NULL, NULL /* No mutable data */, &config,
+                 init, NULL, NULL /* No mutable data */, &config,
 		         POST_KERNEL, CONFIG_LEDMATRIX_INIT_PRIORITY, &driver_api);
