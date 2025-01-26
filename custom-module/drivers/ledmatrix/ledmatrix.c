@@ -25,8 +25,9 @@ LOG_MODULE_REGISTER(ledmatrix, CONFIG_LEDMATRIX_LOG_LEVEL);
 #define NUM_ROW 5 
 #define NUM_COL 5
 
-#define GPIO_HIGH GPIO_OUTPUT_ACTIVE
-#define GPIO_LOW GPIO_OUTPUT_INACTIVE
+/* Used with gpio_pin_set_dt(). */
+#define ACTIVE 1
+#define INACTIVE 0
 
 /*
  * @brief LED matrix dervice config struct.
@@ -91,12 +92,22 @@ static int _set_ledmatrix_rows_cols(const struct device *dev, const uint32_t *ro
  */
 static int set_left_col(const struct device *dev)
 {
-    LOG_DBG("Setting the left column LED on");
+    LOG_INF("Setting the left column LED on");
 
+    /**
+     * Row GPIOs are GPIO_ACTIVE_HIGH. When a row pin is set to high, the row
+     * gets current to light up the LED.
+     */
     const uint32_t row_values[NUM_ROW] =
-        {GPIO_HIGH, GPIO_HIGH, GPIO_HIGH, GPIO_HIGH, GPIO_HIGH};
+        {ACTIVE, ACTIVE, ACTIVE, ACTIVE, ACTIVE};
+    /**
+     * Column GPIO pins are GPIO_ACTIVE_LOW. When a column pin is set to logic
+     * level 1/active, it means it is physically low and not sink the current.
+     * In other words, active column can light up depending on whether rows are
+     * active.
+     */
     const uint32_t col_values[NUM_COL] =
-        {GPIO_LOW, GPIO_HIGH, GPIO_HIGH, GPIO_HIGH, GPIO_HIGH};
+        {ACTIVE, INACTIVE, INACTIVE, INACTIVE, INACTIVE};
 
     return _set_ledmatrix_rows_cols(dev, row_values, col_values);
 }
@@ -111,13 +122,13 @@ static int set_left_col(const struct device *dev)
  */
 static int set_right_col(const struct device *dev)
 {
-    LOG_DBG("Setting the right column LED on");
+    LOG_INF("Setting the right column LED on");
 
     const uint32_t row_values[NUM_ROW] =
-        {GPIO_HIGH, GPIO_HIGH, GPIO_HIGH, GPIO_HIGH, GPIO_HIGH};
+        {ACTIVE, ACTIVE, ACTIVE, ACTIVE, ACTIVE};
     const uint32_t col_values[NUM_COL] =
-        {GPIO_HIGH, GPIO_HIGH, GPIO_HIGH, GPIO_HIGH, GPIO_LOW};
-    
+        {INACTIVE, INACTIVE, INACTIVE, INACTIVE, ACTIVE};
+
     return _set_ledmatrix_rows_cols(dev, row_values, col_values);
 }
 
@@ -131,12 +142,12 @@ static int set_right_col(const struct device *dev)
  */
 static int set_top_row(const struct device *dev)
 {
-    LOG_DBG("Setting the top row LED on");
+    LOG_INF("Setting the top row LED on");
 
     const uint32_t row_values[NUM_ROW] =
-        {GPIO_HIGH, GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW};
+        {ACTIVE, INACTIVE, INACTIVE, INACTIVE, INACTIVE};
     const uint32_t col_values[NUM_COL] =
-        {GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW};
+        {ACTIVE, ACTIVE, ACTIVE, ACTIVE, ACTIVE};
 
     return _set_ledmatrix_rows_cols(dev, row_values, col_values);
 }
@@ -151,12 +162,12 @@ static int set_top_row(const struct device *dev)
  */
 static int set_bottom_row(const struct device *dev)
 {
-    LOG_DBG("Setting the bottom row LED on");
+    LOG_INF("Setting the bottom row LED on");
 
     const uint32_t row_values[NUM_ROW] =
-        {GPIO_HIGH, GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW};
+        {INACTIVE, INACTIVE, INACTIVE, INACTIVE, ACTIVE};
     const uint32_t col_values[NUM_COL] =
-        {GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW};
+        {ACTIVE, ACTIVE, ACTIVE, ACTIVE, ACTIVE};
 
     return _set_ledmatrix_rows_cols(dev, row_values, col_values);
 }
@@ -171,12 +182,12 @@ static int set_bottom_row(const struct device *dev)
  */
 static int turn_off(const struct device *dev)
 {
-    LOG_DBG("Turning the LED matrix off");
+    LOG_INF("Turning the LED matrix off");
 
     const uint32_t row_values[NUM_ROW] =
-        {GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW};
+        {INACTIVE, INACTIVE, INACTIVE, INACTIVE, INACTIVE};
     const uint32_t col_values[NUM_COL] =
-        {GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW, GPIO_LOW};
+        {INACTIVE, INACTIVE, INACTIVE, INACTIVE, INACTIVE};
 
     return _set_ledmatrix_rows_cols(dev, row_values, col_values);
 }
@@ -189,7 +200,7 @@ static int turn_off(const struct device *dev)
  * @retval 0 if successful.
  * @retval -errno Negative errno code on failure.
  */
-static int init(const struct device *dev)
+static int instance_init(const struct device *dev)
 {
     int i;
     int retval;
@@ -197,30 +208,25 @@ static int init(const struct device *dev)
 
     const struct ledmatrix_config *config = dev->config;
 
-    printk("Initiating LED matrix");
-
     for (i = 0; i < NUM_ROW; i++) {
         spec = &config->rows[i];
-        LOG_DBG("Initiating GPIO row pin %d", spec->pin);
         if (!gpio_is_ready_dt(spec)) {
-            LOG_ERR("GPIO of row %d is not ready", i);
             return -ENODEV;
         }
-        retval = gpio_pin_configure_dt(spec, GPIO_LOW);
+        /* Row pins: GPIO_ACTIVE_HIGH | GPIO_OUTPUT_INACTIVE */
+        retval = gpio_pin_configure_dt(spec, GPIO_OUTPUT_INACTIVE);
         if (retval != 0) {
-            LOG_ERR("Failed to set GPIO of row %d: %d", i, retval);
             return retval;
         }
     }
 
     for (i = 0; i < NUM_COL; i++) {
         spec = &config->cols[i];
-        LOG_DBG("Initiating GPIO column pin %d", spec->pin);
         if (!gpio_is_ready_dt(spec)) {
-            LOG_ERR("GPIO of column %d is not ready", i);
             return -ENODEV;
         }
-        retval = gpio_pin_configure_dt(spec, GPIO_LOW);
+        /* Column pins: GPIO_ACTIVE_LOW | GPIO_OUTPUT_INACTIVE */
+        retval = gpio_pin_configure_dt(spec, GPIO_OUTPUT_INACTIVE);
         if (retval != 0) {
             LOG_ERR("Failed to set GPIO of column %d: %d", i, retval);
             return retval;
@@ -245,13 +251,20 @@ static const struct ledmatrix_config config = {
  * @brief Device API struct of the LED matrix driver.
  */
 static struct ledmatrix_driver_api driver_api = {
-    .set_left_col = &set_left_col,
-    .set_right_col = &set_right_col,
-    .set_top_row = &set_top_row,
-    .set_bottom_row = &set_bottom_row,
-    .turn_off = &turn_off,
+
+    .set_left_col = set_left_col,
+    .set_right_col = set_right_col,
+    .set_top_row = set_top_row,
+    .set_bottom_row = set_bottom_row,
+    .turn_off = turn_off,
+
+//    .set_left_col = &set_left_col,
+//    .set_right_col = &set_right_col,
+//    .set_top_row = &set_top_row,
+//    .set_bottom_row = &set_bottom_row,
+//    .turn_off = &turn_off,
 };
 
 DEVICE_DT_DEFINE(LEDMATRIX_NODE,
-                 init, NULL, NULL /* No mutable data */, &config,
+                 instance_init, NULL, NULL /* No mutable data */, &config,
 		         POST_KERNEL, CONFIG_LEDMATRIX_INIT_PRIORITY, &driver_api);
