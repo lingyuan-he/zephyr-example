@@ -95,7 +95,7 @@ int main(void)
 
     /*
      * An alternative to get the device:
-     * DT_NODELABEL(ledmatrix_label)
+     * DEVICE_DT_GET(DT_NODELABEL(ledmatrix_label))
      */
     ledmatrix = DEVICE_DT_GET(DT_PATH(custom_ledmatrix));
     if (ledmatrix == NULL) {
@@ -126,19 +126,19 @@ int main(void)
          * as the threshold.
          */
         if (accel_xyz.x < -MIN_GRAVITY_ACCEL) {
-            LOG_INF("The board turned on its left side");
+            LOG_INF("The board was turned on its left side");
             ledmatrix_set_left_col(ledmatrix);
         } else if (accel_xyz.x > MIN_GRAVITY_ACCEL) {
-            LOG_INF("The board turned on its right side");
+            LOG_INF("The board was turned on its right side");
             ledmatrix_set_right_col(ledmatrix);
         } else if (accel_xyz.y > MIN_GRAVITY_ACCEL) {
-            LOG_INF("The board turned on its up side");
+            LOG_INF("The board was turned on its up side");
             ledmatrix_set_top_row(ledmatrix);
         } else if (accel_xyz.y < -MIN_GRAVITY_ACCEL) {
-            LOG_INF("The board turned on its down side");
+            LOG_INF("The board was turned on its down side");
             ledmatrix_set_bottom_row(ledmatrix);
         } else {
-            ledmatrix_turn_off();
+            ledmatrix_turn_off(ledmatrix);
         }
 
 		k_sleep(K_SECONDS(1));
