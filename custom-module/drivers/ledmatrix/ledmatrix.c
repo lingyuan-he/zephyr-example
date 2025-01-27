@@ -15,12 +15,6 @@
 
 LOG_MODULE_REGISTER(ledmatrix, CONFIG_LEDMATRIX_LOG_LEVEL);
 
-/*
- * Expect only one custom_ledmatrix compatible node in the device tree, use
- * it in init/operation.
- */
-#define LEDMATRIX_NODE DT_INST(0, custom_ledmatrix)
-
 /* Assumes 5x5 as code below hard-codes the number of pin values to set. */
 #define NUM_ROW 5 
 #define NUM_COL 5
@@ -30,18 +24,17 @@ LOG_MODULE_REGISTER(ledmatrix, CONFIG_LEDMATRIX_LOG_LEVEL);
 #define INACTIVE 0
 
 /*
- * @brief LED matrix dervice config struct.
- * @param rows GPIO specs of the rows.
- * @param cols GPIO specs of the columns.
+ * @brief LED matrix dervice config struct definition.
+ * @param GPIO specs of the row GPIO pins.
+ * @param GPIO specs of the columns GPIO pins.
  */
 struct ledmatrix_config {
     struct gpio_dt_spec rows[NUM_ROW];
     struct gpio_dt_spec cols[NUM_COL];
 };
 
-
 /**
- * @brief static helper to set GPIO rows and columns of the LED matrix.
+ * @brief Static helper to set GPIO rows and columns of the LED matrix.
  *
  * @param dev LED matrix device.
  * @param row_values A static NUM_ROW array of values to set on the row GPIO
@@ -237,34 +230,42 @@ static int instance_init(const struct device *dev)
 }
 
 /*
- * @brief configuration of the LED matrix that contains the specs of the row
- * and column GPIO pins.
- */
-static const struct ledmatrix_config config = {
-	.rows = { DT_FOREACH_PROP_ELEM_SEP(LEDMATRIX_NODE, led_row_gpios,
-                                       GPIO_DT_SPEC_GET_BY_IDX, (, )) },
-    .cols = { DT_FOREACH_PROP_ELEM_SEP(LEDMATRIX_NODE, led_col_gpios,
-                                       GPIO_DT_SPEC_GET_BY_IDX, (, )) },
-};
-
-/*
  * @brief Device API struct of the LED matrix driver.
  */
-static struct ledmatrix_driver_api driver_api = {
-
+static const struct ledmatrix_driver_api driver_api = {
     .set_left_col = set_left_col,
     .set_right_col = set_right_col,
     .set_top_row = set_top_row,
     .set_bottom_row = set_bottom_row,
     .turn_off = turn_off,
-
-//    .set_left_col = &set_left_col,
-//    .set_right_col = &set_right_col,
-//    .set_top_row = &set_top_row,
-//    .set_bottom_row = &set_bottom_row,
-//    .turn_off = &turn_off,
 };
 
-DEVICE_DT_DEFINE(LEDMATRIX_NODE,
-                 instance_init, NULL, NULL /* No mutable data */, &config,
-		         POST_KERNEL, CONFIG_LEDMATRIX_INIT_PRIORITY, &driver_api);
+/**
+ * Apply the driver for each "custom_ledmatrix" compatible device using the
+ * convenience macro DT_INST_FOREACH_STATUS_OKAY. While microbit:v2 has only
+ * matrix, this is to illustrate the common approach.
+ *
+ * Within the macro below:
+ * inst expands to the device tree node per each device occurrence.
+ * ##inst expands to a sequence number like 0, 1, 2 etc.
+ *
+ * Each device will have its own config struct, but all devices share the same
+ * init function and driver API functions.
+ * This example does not have any driver data struct for the devices, i.e. the
+ * second NULL in DEVICE_DT_INST_DEFINE.
+ */
+
+#define LEDMATRIX_DEFINE(inst)                                                 \
+                                                                               \
+    static const struct ledmatrix_config config##inst = {                      \
+        .rows = { DT_INST_FOREACH_PROP_ELEM_SEP(inst, led_row_gpios,           \
+                                           GPIO_DT_SPEC_GET_BY_IDX, (, )) },   \
+        .cols = { DT_INST_FOREACH_PROP_ELEM_SEP(inst, led_col_gpios,           \
+                                           GPIO_DT_SPEC_GET_BY_IDX, (, )) },   \
+    };                                                                         \
+                                                                               \
+	DEVICE_DT_INST_DEFINE(inst, instance_init, NULL, NULL, &config##inst,      \
+                          POST_KERNEL, CONFIG_LEDMATRIX_INIT_PRIORITY,         \
+                          &driver_api);
+
+DT_INST_FOREACH_STATUS_OKAY(LEDMATRIX_DEFINE)
