@@ -31,17 +31,17 @@ to enable/disable them.
 This application is tested with the 4.0.99 development version of Zephyr OS as
 of December 2024.
 
-##How to Use this Repository
+## How to Use this Repository
 
 First, the Zephyr main repository and Zephyr SDK should be set up. The simplest
 way to achieve this is to follow the [Zephyr Getting Started Guide][started] and
 complete the blinky example on the micro:bit V2 board.
 
 Next, this repository should be cloned into a sub-directory within the
-zephyrproject folder (~/zephyrproject if you have followed the guide). In other
-words, it is intended to be used as a "workspace" type of application as
-mentioned in the [Zephyr Application Developement][development] documentation
-example, in ~/zephyrproject/applications.
+zephyrproject folder (~/zephyrproject if you have followed the guide), such as
+inside ~/zephyrproject/applications. In other words, it is intended to be used
+as a "workspace" type of application as mentioned in the
+[Zephyr Application Developement][development] documentation.
 
 Then, the default configurations should allow for a seemless compilation:
 ```shell
@@ -57,7 +57,7 @@ Debugging on the board with command:
 ```shell
 west debug
 ```
-##Helpful Links
+## Helpful Links
 
 - [Zephyr GitHub Repository][github]
 - [Getting Started Guide][started]
@@ -67,24 +67,6 @@ west debug
 - [micro:bit v2 Board][board]
 - [The West Tool][west]
 
-- Basic [Zephyr application][app_dev] skeleton
-- [Zephyr workspace applications][workspace_app]
-- [Zephyr modules][modules]
-- [West T2 topology][west_t2]
-- [Custom boards][board_porting]
-- Custom [devicetree bindings][bindings]
-- Out-of-tree [drivers][drivers]
-- Out-of-tree libraries
-- Example CI configuration (using GitHub Actions)
-- Custom [west extension][west_ext]
-- Doxygen and Sphinx documentation boilerplate
-
-This repository is versioned together with the [Zephyr main tree][zephyr]. This
-means that every time that Zephyr is tagged, this repository is tagged as well
-with the same version number, and the [manifest](west.yml) entry for `zephyr`
-will point to the corresponding Zephyr tag. For example, the `example-application`
-v2.6.0 will point to Zephyr v2.6.0. Note that the `main` branch always
-points to the development branch of Zephyr, also `main`.
 
 [github]: https://github.com/zephyrproject-rtos/zephyr
 [example]: https://github.com/zephyrproject-rtos/example-application/tree/main
