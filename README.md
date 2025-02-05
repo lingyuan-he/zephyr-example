@@ -1,21 +1,71 @@
 # Zephyr Example Application
 
-<a href="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml?query=branch%3Amain">
-  <img src="https://github.com/zephyrproject-rtos/example-application/actions/workflows/build.yml/badge.svg?event=push">
-</a>
-<a href="https://github.com/zephyrproject-rtos/example-application/actions/workflows/docs.yml?query=branch%3Amain">
-  <img src="https://github.com/zephyrproject-rtos/example-application/actions/workflows/docs.yml/badge.svg?event=push">
-</a>
-<a href="https://zephyrproject-rtos.github.io/example-application">
-  <img alt="Documentation" src="https://img.shields.io/badge/documentation-3D578C?logo=sphinx&logoColor=white">
-</a>
-<a href="https://zephyrproject-rtos.github.io/example-application/doxygen">
-  <img alt="API Documentation" src="https://img.shields.io/badge/API-documentation-3D578C?logo=c&logoColor=white">
-</a>
+This repository contains an example Zephyr application that is modified from 
+the [Zephyr example application][example]. The main purpose of this repository
+is to illustrate a typical structure of a Zephyr-based application that uses
+a custom module.
 
-This repository contains a Zephyr example application. The main purpose of this
-repository is to serve as a reference on how to structure Zephyr-based
-applications. Some of the features demonstrated in this example are:
+This example application runs on the micro:bit v2 board. When flashed onto the
+board without change, it detects changes in the direction of gravity and
+illuminate a column/row of LED of the 5x5 LED matrix that corresponds with the
+change:
+- When the board is placed flat or not directly on one of its sides (looking
+from the side of the LED matrix), no LED is illuminated.
+- When the board is placed perpendicularly on one of its sides (left, right,
+top, or bottom), the column/row closest to the down side of the board is
+illuminated. For example, if the board has its top side (looking from the side
+of the LED matrix) straight up, the bottow row of LED will illuminate.
+
+This example demonstrates several functionalities of the Zephyr OS:
+- A basic custom libarary (accel) that can be enabled/disabled with Kconfig.
+The library provides support of using the 3-axis sensor.
+- A custom device tree binding and a custom ledmatrix driver that provides
+support of lighting up the top row, bottom row, left column, or right column
+LEDs, as well as to turn the LED matrix off. In combination they illustrate
+the connection from the device tree to the driver API, then to the driver API
+implementation.
+- Layered Kconfig configurations for the custom lib and driver, including config
+to enable/disable them.
+- Logging of modules that are individually configurable.
+
+This application is tested with the 4.0.99 development version of Zephyr OS as
+of December 2024.
+
+##How to Use this Repository
+
+First, the Zephyr main repository and Zephyr SDK should be set up. The simplest
+way to achieve this is to follow the [Zephyr Getting Started Guide][started] and
+complete the blinky example on the micro:bit V2 board.
+
+Next, this repository should be cloned into a sub-directory within the
+zephyrproject folder (~/zephyrproject if you have followed the guide). In other
+words, it is intended to be used as a "workspace" type of application as
+mentioned in the [Zephyr Application Developement][development] documentation
+example, in ~/zephyrproject/applications.
+
+Then, the default configurations should allow for a seemless compilation:
+```shell
+cd ~zephyrproject/applications
+west build -b bbc_microbit_v2 app -p
+```
+
+Flash to the board with command:
+```shell
+west flash
+```
+Debugging on the board with command:
+```shell
+west debug
+```
+##Helpful Links
+
+- [Zephyr GitHub Repository][github]
+- [Getting Started Guide][started]
+- [Application Developement][development]
+- [Devicetree HOWTOs][howtos]
+- [Device Driver Model][model]
+- [micro:bit v2 Board][board]
+- [The West Tool][west]
 
 - Basic [Zephyr application][app_dev] skeleton
 - [Zephyr workspace applications][workspace_app]
@@ -36,101 +86,12 @@ will point to the corresponding Zephyr tag. For example, the `example-applicatio
 v2.6.0 will point to Zephyr v2.6.0. Note that the `main` branch always
 points to the development branch of Zephyr, also `main`.
 
-[app_dev]: https://docs.zephyrproject.org/latest/develop/application/index.html
-[workspace_app]: https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app
-[modules]: https://docs.zephyrproject.org/latest/develop/modules.html
-[west_t2]: https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-t2
-[board_porting]: https://docs.zephyrproject.org/latest/guides/porting/board_porting.html
-[bindings]: https://docs.zephyrproject.org/latest/guides/dts/bindings.html
-[drivers]: https://docs.zephyrproject.org/latest/reference/drivers/index.html
-[zephyr]: https://github.com/zephyrproject-rtos/zephyr
-[west_ext]: https://docs.zephyrproject.org/latest/develop/west/extensions.html
+[github]: https://github.com/zephyrproject-rtos/zephyr
+[example]: https://github.com/zephyrproject-rtos/example-application/tree/main
+[started]: https://docs.zephyrproject.org/latest/develop/getting_started/index.html
+[development]: https://docs.zephyrproject.org/latest/develop/application/index.html
+[howtos]: https://docs.zephyrproject.org/latest/build/dts/howtos.html
+[model]: https://docs.zephyrproject.org/latest/kernel/drivers/index.html
+[board]: https://docs.zephyrproject.org/latest/boards/bbc/microbit_v2/doc/index.html
+[west]: https://docs.zephyrproject.org/latest/develop/west/index.html
 
-## Getting Started
-
-Before getting started, make sure you have a proper Zephyr development
-environment. Follow the official
-[Zephyr Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html).
-
-### Initialization
-
-The first step is to initialize the workspace folder (``my-workspace``) where
-the ``example-application`` and all Zephyr modules will be cloned. Run the following
-command:
-
-```shell
-# initialize my-workspace for the example-application (main branch)
-west init -m https://github.com/zephyrproject-rtos/example-application --mr main my-workspace
-# update Zephyr modules
-cd my-workspace
-west update
-```
-
-### Building and running
-
-To build the application, run the following command:
-
-```shell
-cd example-application
-west build -b $BOARD app
-```
-
-where `$BOARD` is the target board.
-
-You can use the `custom_plank` board found in this
-repository. Note that Zephyr sample boards may be used if an
-appropriate overlay is provided (see `app/boards`).
-
-A sample debug configuration is also provided. To apply it, run the following
-command:
-
-```shell
-west build -b $BOARD app -- -DEXTRA_CONF_FILE=debug.conf
-```
-
-Once you have built the application, run the following command to flash it:
-
-```shell
-west flash
-```
-
-### Testing
-
-To execute Twister integration tests, run the following command:
-
-```shell
-west twister -T tests --integration
-```
-
-### Documentation
-
-A minimal documentation setup is provided for Doxygen and Sphinx. To build the
-documentation first change to the ``doc`` folder:
-
-```shell
-cd doc
-```
-
-Before continuing, check if you have Doxygen installed. It is recommended to
-use the same Doxygen version used in [CI](.github/workflows/docs.yml). To
-install Sphinx, make sure you have a Python installation in place and run:
-
-```shell
-pip install -r requirements.txt
-```
-
-API documentation (Doxygen) can be built using the following command:
-
-```shell
-doxygen
-```
-
-The output will be stored in the ``_build_doxygen`` folder. Similarly, the
-Sphinx documentation (HTML) can be built using the following command:
-
-```shell
-make html
-```
-
-The output will be stored in the ``_build_sphinx`` folder. You may check for
-other output formats other than HTML by running ``make help``.
