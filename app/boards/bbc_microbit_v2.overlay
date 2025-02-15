@@ -12,8 +12,8 @@
 
 	/*
 	 * Define a node of the custom "custom-ledmatrix" binding that contains GPIO
-	 * information from the 5x5 LED matrix. Provide the same GPIO pins like the
-	 * "led_matrix" node in the bbc_microbit_v2 board device treesource file.
+	 * information from the 5x5 LED matrix. Provide the same GPIO pins as the
+	 * "led_matrix" node in the bbc_microbit_v2 board devicetree source file.
 	 */
 	ledmatrix_label: custom_ledmatrix {
 		compatible = "custom-ledmatrix";
