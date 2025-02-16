@@ -29,10 +29,10 @@
 
 /** @brief LED matrix driver API struct */
 __subsystem struct ledmatrix_driver_api {
-	/**
-	 * @brief Set the left-most column of LED to illuminate.
-	 */
-	int (*set_left_col)(const struct device *dev);
+    /**
+     * @brief Set the left-most column of LED to illuminate.
+     */
+    int (*set_left_col)(const struct device *dev);
 
     /**
      * @brief Set the right-most column of LED to illuminate.
@@ -67,9 +67,9 @@ __syscall int ledmatrix_set_left_col(const struct device *dev);
 
 static inline int z_impl_ledmatrix_set_left_col(const struct device *dev)
 {
-	__ASSERT_NO_MSG(DEVICE_API_IS(ledmatrix, dev));
+    __ASSERT_NO_MSG(DEVICE_API_IS(ledmatrix, dev));
 
-	return DEVICE_API_GET(ledmatrix, dev)->set_left_col(dev);
+    return DEVICE_API_GET(ledmatrix, dev)->set_left_col(dev);
 }
 
 /**
