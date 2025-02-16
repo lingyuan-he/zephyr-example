@@ -44,7 +44,8 @@ struct ledmatrix_config {
  * @retval 0 If successful.
  * @retval -errno Negative errno code on failure.
  */
-static int _set_ledmatrix_rows_cols(const struct device *dev, const uint32_t *row_values,
+static int _set_ledmatrix_rows_cols(const struct device *dev,
+                                    const uint32_t *row_values,
                                     const uint32_t *col_values)
 {
     int i;
@@ -264,7 +265,7 @@ static const struct ledmatrix_driver_api driver_api = {
                                            GPIO_DT_SPEC_GET_BY_IDX, (, )) },   \
     };                                                                         \
                                                                                \
-	DEVICE_DT_INST_DEFINE(inst, instance_init, NULL, NULL, &config##inst,      \
+    DEVICE_DT_INST_DEFINE(inst, instance_init, NULL, NULL, &config##inst,      \
                           POST_KERNEL, CONFIG_LEDMATRIX_INIT_PRIORITY,         \
                           &driver_api);
 
